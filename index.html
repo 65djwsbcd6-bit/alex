@@ -127,6 +127,9 @@
     <!-- HERO SECTION -->
     <section id="home" class="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
         <div class="absolute inset-0 z-0">
+            <video id="heroVideo" class="absolute inset-0 w-full h-full object-cover opacity-50" autoplay muted loop playsinline preload="metadata" poster="images/manila-bay-shoreline-plastic.jpg" aria-hidden="true">
+                <source src="videos/hero-manila-bay.mp4" type="video/mp4">
+            </video>
             <img src="images/manila-bay-shoreline-plastic.jpg" alt="Plastic waste along the Manila Bay shoreline" class="w-full h-full object-cover opacity-25 filter contrast-125" onerror="ph(this)" onload="phOk(this)">
             <div class="absolute inset-0 bg-gradient-to-t from-ocean-900 via-ocean-900/80 to-transparent"></div>
         </div>
@@ -178,6 +181,7 @@
                 </div>
             </div>
         </div>
+        <button id="heroVideoBtn" type="button" class="absolute bottom-4 right-4 z-20 px-3 py-1.5 rounded-full bg-black/50 border border-white/20 text-[11px] text-slate-200 hover:bg-black/70" aria-label="Pause background video">Pause video</button>
     </section>
 
     <!-- SECTION: INTERACTIVE FEATURES HUB -->
@@ -999,7 +1003,7 @@
                 <div>
                     <h5 class="font-semibold text-slate-300 mb-2">Photographic & Media Documentation:</h5>
                     <ul class="space-y-1 list-disc list-inside">
-                        <li>Photographs: record the photographer, source and licence for each image in images/CREDITS.txt.</li>
+                        <li>Photographs: record the photographer, source and licence for each image and video in images/CREDITS.txt.</li>
                     </ul>
                 </div>
             </div>
@@ -1335,6 +1339,20 @@
                 prompt.innerText = "Click to reveal details";
             }
         }
+    
+        // Hero background video: hide button if no video, respect reduced motion, allow pause
+        (function(){
+            const v=document.getElementById('heroVideo'),b=document.getElementById('heroVideoBtn');
+            if(!v||!b)return;
+            const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const sync=()=>{b.textContent=v.paused?'Play video':'Pause video';b.setAttribute('aria-label',v.paused?'Play background video':'Pause background video');};
+            if(reduce){v.removeAttribute('autoplay');v.pause();}
+            const src=v.querySelector('source');
+            if(src)src.addEventListener('error',()=>{b.style.display='none';v.style.display='none';});
+            v.addEventListener('play',sync);v.addEventListener('pause',sync);
+            b.addEventListener('click',()=>{v.paused?v.play():v.pause();});
+            sync();
+        })();
     </script>
 </body>
 </html>
